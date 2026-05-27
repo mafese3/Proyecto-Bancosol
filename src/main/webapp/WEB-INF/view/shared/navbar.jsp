@@ -1,9 +1,11 @@
+<%@ page import="com.leftjoiners.bancosol.proyectobackend.dto.Usuario" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
 <link rel="stylesheet" href="/css/navbar.css">
 
 <%
     String section = (String) request.getAttribute("currentSection");
+    Usuario usuario = (Usuario) session.getAttribute("user");
 
     if (section == null) {
         section = "";
@@ -15,6 +17,7 @@
         <div class="logo-container">
             <img src="/images/LOGO_BANCOSOL.png" alt="Logo Bancosol" class="logo-img">
         </div>
+        <p><%=usuario.getNombre()%></p>
 
         <div class="user-section">
             <button class="icon-btn">
@@ -26,7 +29,7 @@
             <button class="icon-btn">
                 <i class="ri-question-line"></i>
             </button>
-            <div class="user-avatar">B</div>
+            <div class="user-avatar"><%=usuario.getNombre().substring(0,1)%></div>
         </div>
     </div>
 

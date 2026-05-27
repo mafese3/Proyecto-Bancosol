@@ -16,11 +16,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class AsignacionTurnoService {
-    private final TiendaCampanyaRepository tiendaCampanyaRepository;
     private final AsignacionTurnoRepository asignacionTurnoRepository;
-    private final TipoTurnoRepository tipoTurnoRepository;
-    private final ColaboradoresRespository colaboradoresRespository;
-    private final TurnoRepository turnoRepository;
     private final AsignacionTurnoMapper asignacionTurnoMapper;
 
     public List<AsignacionTurno> listarAsignacionColaboradores () {

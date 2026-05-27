@@ -10,17 +10,17 @@ import java.util.List;
 @AllArgsConstructor
 public class Usuario {
     private Integer id;
-    private Rol rol;
+    private String rol;
     private String usuario;
     private String contrasenya;
     private String nombre;
     private String telefono;
     private String email;
-    private Entidad entidad;
-    private Zona zonaAsignada;
-    private Localidad localidad;
+    private String entidad;
+    private String zonaAsignada;
+    private String localidad;
     private Integer cp;
-    private Distrito distrito;
+    private String distrito;
 
     private List<Integer> colaboradoresCoordinados;
     private List<Integer> tiendasCoordinadas;
