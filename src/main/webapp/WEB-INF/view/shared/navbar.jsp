@@ -26,8 +26,11 @@
 
     <nav class="bottom-navbar">
         <ul class="nav-menu">
-            <li class="nav-item <%=section.equals("campanyas") ? "active" : ""%>">
-                <a href="/campanyas" class="nav-link">
+            <%
+                boolean esAdmin = usuario.getRol() != null && usuario.getRol().equals("ROLE_ADMIN");
+            %>
+            <li class="nav-item <%=section.equals("campanyas") ? "active" : ""%> <%=esAdmin ? "" : "disabled"%>">
+            <a href="/campanyas" class="nav-link" >
                     <i class="ri-megaphone-line"></i>
                     <span>Gestión de Campañas</span>
                 </a>
@@ -44,7 +47,7 @@
                     <span>Colaboradores</span>
                 </a>
             </li>
-            <li class="nav-item <%=section.equals("coordinadores") ? "active" : ""%>">
+            <li class="nav-item <%=section.equals("coordinadores") ? "active" : ""%> <%=esAdmin ? "" : "disabled"%>">
                 <a href="/coordinadores" class="nav-link">
                     <i class="ri-team-line"></i>
                     <span>Coordinadores</span>

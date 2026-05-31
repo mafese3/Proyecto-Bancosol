@@ -78,6 +78,7 @@
     align-items: center;
 }
 
+
 .nav-link {
     display: flex;
     align-items: center;
@@ -127,4 +128,18 @@
 .logout-link:hover {
     color: #dc2626;
     background-color: #fee2e2;
+}
+
+.nav-item.disabled {
+    cursor: not-allowed;
+}
+
+.nav-item.disabled .nav-link {
+    color: #cbd5e1;
+    pointer-events: none;
+}
+
+.nav-item.disabled:hover .nav-link {
+    background-color: transparent;
+    color: #cbd5e1;
 }

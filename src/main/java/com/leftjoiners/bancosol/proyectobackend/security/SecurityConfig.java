@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
                         .requestMatchers("/", "/auth", "/login", "/api/auth/**", "/css/**", "/images/**").permitAll()
-                        .requestMatchers("/campanyas").hasRole("ADMIN")
+                        .requestMatchers("/campanyas", "/campanyas/**").hasRole("ADMIN")
                         .requestMatchers("/turnos/crearTurno").hasAnyRole("ADMIN", "COORD")
                         .requestMatchers("/turnos/guardarTurno").hasAnyRole("ADMIN", "COORD")
                         .anyRequest().authenticated()
