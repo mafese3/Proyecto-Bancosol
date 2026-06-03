@@ -1,14 +1,12 @@
 /*
-Javier Urbaneja Benítez 80%
+Javier Urbaneja Benítez 20%
+Daniel Robles Cantos 60%
 IA: 20%
 */
 
 package com.leftjoiners.bancosol.proyectobackend.mapper;
 
-import com.leftjoiners.bancosol.proyectobackend.dto.Cadena;
-import com.leftjoiners.bancosol.proyectobackend.dto.Distrito;
-import com.leftjoiners.bancosol.proyectobackend.dto.Localidad;
-import com.leftjoiners.bancosol.proyectobackend.dto.Tienda;
+import com.leftjoiners.bancosol.proyectobackend.dto.*;
 import com.leftjoiners.bancosol.proyectobackend.entity.TiendaEntity;
 import org.springframework.stereotype.Component;
 import java.util.stream.Collectors;
@@ -38,6 +36,20 @@ public class TiendaMapper extends MapperDTO<Tienda, TiendaEntity> {
             Localidad l = new Localidad();
             l.setId(entity.getLocalidad().getId());
             l.setNombre(entity.getLocalidad().getNombre());
+
+            if (entity.getLocalidad().getMunicipio() != null) {
+                Municipio m = new Municipio();
+                m.setId(entity.getLocalidad().getMunicipio().getId());
+                m.setNombre(entity.getLocalidad().getMunicipio().getNombre());
+
+                if (entity.getLocalidad().getMunicipio().getZona() != null) {
+                    Zona z = new Zona();
+                    z.setId(entity.getLocalidad().getMunicipio().getZona().getId());
+                    z.setNombre(entity.getLocalidad().getMunicipio().getZona().getNombre());
+                    m.setZona(z);
+                }
+                l.setMunicipio(m);
+            }
             dto.setLocalidad(l);
         }
 
@@ -49,8 +61,31 @@ public class TiendaMapper extends MapperDTO<Tienda, TiendaEntity> {
         }
 
         if (entity.getTiendasCampanya() != null) {
-            dto.setTiendasCampanya(entity.getTiendasCampanya().stream()
-                    .map(tc -> tc.getId()).collect(Collectors.toList()));
+            dto.setTiendasCampanya(entity.getTiendasCampanya().stream().map(tc -> {
+                TiendaCampanya tcDTO = new TiendaCampanya();
+                tcDTO.setId(tc.getId());
+
+                // campaña y su tipo (Primavera = 2, GR = 1)
+                if (tc.getCampanya() != null) {
+                    Campanya cDTO = new Campanya();
+                    cDTO.setId(tc.getCampanya().getId());
+                    if (tc.getCampanya().getTipoCampanya() != null) {
+                        TipoCampanya tipoDTO = new TipoCampanya();
+                        tipoDTO.setId(tc.getCampanya().getTipoCampanya().getId());
+                        cDTO.setTipoCampanya(tipoDTO);
+                    }
+                    tcDTO.setCampanya(cDTO);
+                }
+
+                if (tc.getCoordinador() != null) {
+                    Usuario uDTO = new Usuario();
+                    uDTO.setId(tc.getCoordinador().getId());
+                    uDTO.setNombre(tc.getCoordinador().getNombre());
+                    tcDTO.setCoordinador(uDTO);
+                }
+
+                return tcDTO;
+            }).collect(Collectors.toList()));
         }
 
         return dto;

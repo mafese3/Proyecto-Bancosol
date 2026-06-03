@@ -7,6 +7,7 @@ import com.leftjoiners.bancosol.proyectobackend.mapper.UsuarioMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,6 +24,11 @@ public class UsuarioService {
             return null;
         }
 
+    }
+
+    public List<Usuario> listarCoordinadores() {
+        List<UsuarioEntity> coordinadores = this.usuarioRepository.findCoordinadores();
+        return this.usuarioMapper.toDTOList(coordinadores);
     }
 
 }

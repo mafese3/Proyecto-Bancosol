@@ -1,3 +1,9 @@
+<%--
+/*
+Daniel Robles Cantos 80%
+IA: 20%
+*/
+--%>
 <%@ page import="java.util.List" %>
 <%@ page import="com.leftjoiners.bancosol.proyectobackend.entity.TiendaCampanyaEntity" %>
 <%@ page import="com.leftjoiners.bancosol.proyectobackend.entity.TiendaEntity" %>
@@ -5,6 +11,7 @@
 <%@ page import="com.leftjoiners.bancosol.proyectobackend.entity.ZonaEntity" %>
 <%@ page import="com.leftjoiners.bancosol.proyectobackend.entity.LocalidadEntity" %>
 <%@ page import="com.leftjoiners.bancosol.proyectobackend.entity.ColaboradorEntity" %>
+<%@ page import="com.leftjoiners.bancosol.proyectobackend.dto.*" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -14,11 +21,11 @@
 </head>
 <body>
 <%
-    List<TiendaEntity> tiendas = (List<TiendaEntity>) request.getAttribute("tiendas");
+    List<Tienda> tiendas = (List<Tienda>) request.getAttribute("tiendas");
 
-    List<CadenaEntity> cadenas = (List<CadenaEntity>) request.getAttribute("cadenas");
-    List<ZonaEntity> zonas = (List<ZonaEntity>) request.getAttribute("zonas");
-    List<LocalidadEntity> localidades = (List<LocalidadEntity>) request.getAttribute("localidades");
+    List<Cadena> cadenas = (List<Cadena>) request.getAttribute("cadenas");
+    List<Zona> zonas = (List<Zona>) request.getAttribute("zonas");
+    List<Localidad> localidades = (List<Localidad>) request.getAttribute("localidades");
 
     Integer cadenaMarcada = (Integer) request.getAttribute("cadenaMarcada");
     Integer zonaMarcada = (Integer) request.getAttribute("zonaMarcada");
@@ -55,7 +62,7 @@
                         <label for="cadena-tienda">Filtrar por Cadena</label>
                         <select name="cadena-tienda" id="cadena-tienda" class="btn-outline" style="padding: 5px 15px;">
                             <option value="">Sin Filtro</option>
-                            <% for(CadenaEntity c : cadenas){ %>
+                            <% for(Cadena c : cadenas){ %>
                             <option value="<%=c.getId()%>" <%= c.getId() == cadenaMarcada ? "selected" : ""%> > <%=c.getNombre()%></option>
                             <% } %>
                         </select>
@@ -66,7 +73,7 @@
                         <label for="zona-tienda">Filtrar por Zona</label>
                         <select name="zona-tienda" id="zona-tienda" class="btn-outline" style="padding: 5px 15px;">
                             <option value="">Sin Filtro</option>
-                            <% for(ZonaEntity z : zonas){ %>
+                            <% for(Zona z : zonas){ %>
                             <option value="<%=z.getId()%>" <%= z.getId() == zonaMarcada ? "selected" : ""%> ><%=z.getNombre()%></option>
                             <% } %>
                         </select>
@@ -77,7 +84,7 @@
                         <label for="localidad-tienda">Filtrar por Localidad</label>
                         <select name="localidad-tienda" id="localidad-tienda" class="btn-outline" style="padding: 5px 15px;">
                             <option value="">Sin Filtro</option>
-                            <% for(LocalidadEntity l : localidades){ %>
+                            <% for(Localidad l : localidades){ %>
                             <option value="<%=l.getId()%>" <%= l.getId() == localidadMarcada ? "selected" : ""%>><%=l.getNombre()%></option>
                             <% } %>
                         </select>
@@ -100,6 +107,7 @@
                         <thead>
                         <tr>
                             <th rowspan="2">Tienda</th>
+                            <th rowspan="2">Cadena</th>
                             <th rowspan="2">Lineales</th>
                             <th rowspan="2">Domicilio</th>
                             <th rowspan="2">Zona</th>
@@ -116,9 +124,10 @@
                         </thead>
 
                         <tbody id="table-body-tiendas">
-                        <% for(TiendaEntity tienda : tiendas){ %>
+                        <% for(Tienda tienda : tiendas){ %>
                         <tr data-id="<%=tienda.getId()%>">
                             <td class="font-medium text-blue"><%= tienda.getNombre() %></td>
+                            <td><%=tienda.getCadena().getNombre()%></td>
                             <td><%=tienda.getLineales()%></td>
                             <td class="small-td"><%= tienda.getDomicilio() %></td>
                             <td><%= tienda.getLocalidad().getMunicipio().getZona().getNombre() %></td>
@@ -129,7 +138,7 @@
                                 String coordGR = "Sin asignar";
 
                                 if (tienda.getTiendasCampanya() != null) {
-                                    for(TiendaCampanyaEntity c : tienda.getTiendasCampanya()) {
+                                    for(TiendaCampanya c : tienda.getTiendasCampanya()) {
                                         if(c.getCampanya().getTipoCampanya().getId() == 2 && c.getCoordinador() != null) {
                                             coordPrimavera = c.getCoordinador().getNombre();
                                         } else if (c.getCampanya().getTipoCampanya().getId() == 1 && c.getCoordinador() != null) {
@@ -155,8 +164,12 @@
 
                             <%-- Botones de acción --%>
                             <td><a href="/tiendas/crearTienda?id=<%=tienda.getId()%>" class="interact-tienda-btn editar-btn">Editar</a> </td>
-                            <td><a class="interact-tienda-btn eliminar-btn">Eliminar</a> </td>
-                            <td><a class="interact-tienda-btn ver-btn">Ver</a> </td>
+                            <td><a href="/tiendas/eliminarTienda?id=<%= tienda.getId() %>"
+                                   class="interact-tienda-btn eliminar-btn"
+                                   onclick="return confirm('¿Estás seguro de que deseas eliminar la tienda «<%= tienda.getNombre() %>»?\n\nEsta acción también borrará sus asignaciones en las campañas y no se puede deshacer.');">
+                                Eliminar
+                            </a> </td>
+                            <td><a href="/tiendas/verTienda?id=<%=tienda.getId()%>" class="interact-tienda-btn ver-btn">Ver</a> </td>
                         </tr>
                         <% } %>
                         </tbody>

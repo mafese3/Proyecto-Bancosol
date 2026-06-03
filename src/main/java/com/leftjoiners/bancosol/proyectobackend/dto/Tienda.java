@@ -1,5 +1,6 @@
 package com.leftjoiners.bancosol.proyectobackend.dto;
 
+import com.leftjoiners.bancosol.proyectobackend.entity.TiendaCampanyaEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,5 +19,5 @@ public class Tienda {
     private Distrito distrito;
     private String domicilio;
 
-    private List<Integer> tiendasCampanya;
+    private List<TiendaCampanya> tiendasCampanya;
 }

@@ -1,7 +1,14 @@
+/*
+Daniel Robles Cantos 90%
+IA: 10%
+*/
 package com.leftjoiners.bancosol.proyectobackend.controller;
 
 import com.leftjoiners.bancosol.proyectobackend.dao.*;
+import com.leftjoiners.bancosol.proyectobackend.dto.Tienda;
 import com.leftjoiners.bancosol.proyectobackend.entity.*;
+import com.leftjoiners.bancosol.proyectobackend.service.*;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Controller;
@@ -15,51 +22,26 @@ import java.util.List;
 
 @RequestMapping("/tiendas")
 @Controller
+@AllArgsConstructor
 public class TiendasController {
 
-    @Autowired
-    protected TiendaRepository tiendaRepository;
-
-    @Autowired
-    protected CadenaRepository cadenaRepository;
-
-    @Autowired
-    protected ZonaRepository zonaRepository;
-
-    @Autowired
-    protected LocalidadRepository localidadRepository;
-
-    @Autowired
-    protected MunicipioRepository municipioRepository;
-
-    @Autowired
-    protected UsuarioRepository usuarioRepository;
-
-    @Autowired
-    protected TiendaCampanyaRepository tiendaCampanyaRepository;
-
-    @Autowired
-    protected CampanyaRepository campanyaRepository;
-
-    @Autowired
-    protected DistritoRepository distritoRepository;
+    private final TiendaService tiendasService;
+    private final CadenaService cadenaService;
+    private final ZonaService zonaService;
+    private final LocalidadService localidadService;
+    private final MunicipioService municipioService;
+    private final DistritoService distritoService;
+    private final UsuarioService usuarioService;
 
     @GetMapping("")
-    public String doTiendas(Model model,
-                            @RequestParam(value = "tiendas", required = false) List<TiendaEntity> tiendasFiltradas) {
-
-        List<TiendaEntity> tiendas = tiendaRepository.findAll();
-
-        model.addAttribute("tiendas", tiendas);
+    public String doTiendas(Model model) {
+        model.addAttribute("tiendas", this.tiendasService.listarTiendas());
         model.addAttribute("currentSection", "tiendas");
 
-        //Filtrado:
-        List<CadenaEntity> cadenas = cadenaRepository.findAll();
-        model.addAttribute("cadenas", cadenas);
-        List<ZonaEntity> zonas = zonaRepository.findAll();
-        model.addAttribute("zonas", zonas);
-        List<LocalidadEntity> localidades = localidadRepository.findAll();
-        model.addAttribute("localidades", localidades);
+        // Listas para los filtros
+        model.addAttribute("cadenas", this.cadenaService.listarCadenas());
+        model.addAttribute("zonas", this.zonaService.listarZonas());
+        model.addAttribute("localidades", this.localidadService.listarLocalidades());
 
         return "tiendas/tiendas";
     }
@@ -68,16 +50,15 @@ public class TiendasController {
     public String doFiltrarTiendas(Model model,
                                    @RequestParam(value = "cadena-tienda", required = false) Integer cadenaId,
                                    @RequestParam(value = "localidad-tienda", required = false) Integer localidadId,
-                                   @RequestParam(value = "zona-tienda", required = false) Integer zonaId){
+                                   @RequestParam(value = "zona-tienda", required = false) Integer zonaId) {
 
-
-        List<TiendaEntity> tiendasFiltradas = this.tiendaRepository.filtrarTiendasMulticriterio(cadenaId, localidadId, zonaId);
+        List<Tienda> tiendasFiltradas = this.tiendasService.filtrarTiendas(cadenaId, localidadId, zonaId);
         model.addAttribute("tiendas", tiendasFiltradas);
         model.addAttribute("currentSection", "tiendas");
 
-        model.addAttribute("cadenas", this.cadenaRepository.findAll());
-        model.addAttribute("zonas", this.zonaRepository.findAll());
-        model.addAttribute("localidades", this.localidadRepository.findAll());
+        model.addAttribute("cadenas", this.cadenaService.listarCadenas());
+        model.addAttribute("zonas", this.zonaService.listarZonas());
+        model.addAttribute("localidades", this.localidadService.listarLocalidades());
 
         model.addAttribute("cadenaMarcada", cadenaId);
         model.addAttribute("zonaMarcada", zonaId);
@@ -86,31 +67,25 @@ public class TiendasController {
         return "tiendas/tiendas";
     }
 
-
     @GetMapping("/crearTienda")
     public String doCrearTienda(Model model, @RequestParam(value = "id", required = false) Integer idTienda) {
-
-        // Si viene un ID en la URL, significa que queremos EDITAR. Si no, CREAR.
+        //si id entonces editamos, sino no
         boolean isEditando = (idTienda != null);
+
         model.addAttribute("editando", isEditando);
+        model.addAttribute("viendo", false);
         model.addAttribute("currentSection", "tiendas");
 
-
         if (isEditando) {
-            TiendaEntity tienda = tiendaRepository.findById(idTienda).orElse(null);
+            Tienda tienda = this.tiendasService.buscarTienda(idTienda);
             model.addAttribute("tiendaActual", tienda);
         }
 
-        model.addAttribute("cadenas", cadenaRepository.findAll());
-        model.addAttribute("zonas", zonaRepository.findAll());
-        model.addAttribute("municipios", municipioRepository.findAll());
-        model.addAttribute("localidades", localidadRepository.findAll());
-        model.addAttribute("distritos", distritoRepository.findAll());
-
-        model.addAttribute("coordinadores", usuarioRepository.findCoordinadores());
+        this.cargarDesplegablesFormulario(model);
 
         return "tiendas/crear_tienda";
     }
+
 
     @PostMapping("/guardarTienda")
     public String guardarTienda(
@@ -125,79 +100,39 @@ public class TiendasController {
             @RequestParam(value = "coordinadorPrimaveraId", required = false) Integer coordinadorPrimaveraId,
             @RequestParam(value = "coordinadorGRId", required = false) Integer coordinadorGRId) {
 
-        TiendaEntity tienda;
-
-        if (id != null) {
-            tienda = tiendaRepository.findById(id).orElse(new TiendaEntity());
-        } else {
-            tienda = new TiendaEntity();
-        }
-
-        tienda.setNombre(nombre);
-        tienda.setDomicilio(domicilio);
-
-        tienda.setLineales(lineales != null ? lineales : 0);
-
-        tienda.setCp(codigoPostal);
-
-        if (distritoId != null) {
-            DistritoEntity distrito = distritoRepository.findById(distritoId).orElse(null);
-            tienda.setDistrito(distrito);
-        } else {
-            tienda.setDistrito(null); // Si ocultaron el cajón, lo dejamos a null
-        }
-
-        CadenaEntity cadena = cadenaRepository.findById(cadenaId).orElse(null);
-        tienda.setCadena(cadena);
-
-        LocalidadEntity localidad = localidadRepository.findById(localidadId).orElse(null);
-        tienda.setLocalidad(localidad);
-
-        tienda = tiendaRepository.save(tienda);
-
-        gestionarCoordinador(tienda, 2, coordinadorPrimaveraId);
-        gestionarCoordinador(tienda, 1, coordinadorGRId);
+        this.tiendasService.guardarTienda(id, nombre, lineales, domicilio, codigoPostal, distritoId,
+                cadenaId, localidadId, coordinadorPrimaveraId, coordinadorGRId);
 
         return "redirect:/tiendas";
     }
 
 
-    private void gestionarCoordinador(TiendaEntity tienda, Integer tipoCampanyaId, Integer coordinadorId) {
+    @GetMapping("/verTienda")
+    public String doVerTienda(Model model, @RequestParam("id") Integer idTienda) {
+        Tienda tienda = this.tiendasService.buscarTienda(idTienda);
 
-        UsuarioEntity coordinador = null;
-        if (coordinadorId != null) {
-            coordinador = usuarioRepository.findById(coordinadorId).orElse(null);
-        }
+        model.addAttribute("tiendaActual", tienda);
+        model.addAttribute("editando", false);
+        model.addAttribute("viendo", true);
+        model.addAttribute("currentSection", "tiendas");
 
-        boolean relacionEncontrada = false;
+        this.cargarDesplegablesFormulario(model);
 
-        // Buscamos si la tienda ya estaba asignada a este tipo de campaña
-        if (tienda.getTiendasCampanya() != null) {
-            for (TiendaCampanyaEntity tc : tienda.getTiendasCampanya()) {
-                if (tc.getCampanya().getTipoCampanya().getId().equals(tipoCampanyaId)) {
-                    // Actualizamos el coordinador (incluso a null si seleccionaron "Sin asignar")
-                    tc.setCoordinador(coordinador);
-                    tiendaCampanyaRepository.save(tc);
-                    relacionEncontrada = true;
-                    break;
-                }
-            }
-        }
+        return "tiendas/crear_tienda";
+    }
 
-        // Si la relación no existía y han elegido un coordinador, la creamos
-        if (!relacionEncontrada && coordinador != null) {
+    @GetMapping("/eliminarTienda")
+    public String doEliminarTienda(@RequestParam("id") Integer idTienda) {
+        this.tiendasService.eliminarTienda(idTienda);
+        return "redirect:/tiendas";
+    }
 
-            // Busca la última campaña activa de este tipo
-            CampanyaEntity campanyaActiva = campanyaRepository.buscarUltimaCampanyaPorTipo(tipoCampanyaId);
-
-            if (campanyaActiva != null) {
-                TiendaCampanyaEntity nuevaRelacion = new TiendaCampanyaEntity();
-                nuevaRelacion.setTienda(tienda);
-                nuevaRelacion.setCampanya(campanyaActiva);
-                nuevaRelacion.setCoordinador(coordinador);
-
-                tiendaCampanyaRepository.save(nuevaRelacion);
-            }
-        }
+    private void cargarDesplegablesFormulario(Model model) {
+        model.addAttribute("cadenas", this.cadenaService.listarCadenas());
+        model.addAttribute("zonas", this.zonaService.listarZonas());
+        model.addAttribute("municipios", this.municipioService.listarMunicipios());
+        model.addAttribute("localidades", this.localidadService.listarLocalidades());
+        model.addAttribute("distritos", this.distritoService.listarDistritos());
+        model.addAttribute("coordinadores", this.usuarioService.listarCoordinadores());
     }
 }

@@ -1,42 +1,41 @@
 <%--
-  Created by IntelliJ IDEA.
-  User: dante
-  Date: 21/05/2026
-  Time: 19:13
-  To change this template use File | Settings | File Templates.
+/*
+Daniel Robles Cantos 80%
+IA: 20%
+*/
 --%>
 <%@ page import="java.util.List" %>
 <%@ page import="com.leftjoiners.bancosol.proyectobackend.entity.*" %>
+<%@ page import="com.leftjoiners.bancosol.proyectobackend.dto.*" %>
+<%@ page import="org.springframework.cglib.core.Local" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
-<head>
-    <title><%= (request.getAttribute("editando") != null && (Boolean)request.getAttribute("editando")) ? "Editar" : "Crear" %> Tienda </title>
-    <link rel="stylesheet" href="/css/global.css">
-    <link rel="stylesheet" href="/css/campanyas.css">
-</head>
+
 <%
     // Recuperamos las listas para los desplegables
-    List<CadenaEntity> listaCadenas = (List<CadenaEntity>) request.getAttribute("cadenas");
-    List<ZonaEntity> listaZonas = (List<ZonaEntity>) request.getAttribute("zonas");
-    List<MunicipioEntity> listaMunicipios = (List<MunicipioEntity>) request.getAttribute("municipios");
-    List<LocalidadEntity> listaLocalidades = (List<LocalidadEntity>) request.getAttribute("localidades");
-    List<DistritoEntity> listaDistritos = (List<DistritoEntity>) request.getAttribute("distritos");
+    List<Cadena> listaCadenas = (List<Cadena>) request.getAttribute("cadenas");
+    List<Zona> listaZonas = (List<Zona>) request.getAttribute("zonas");
+    List<Municipio> listaMunicipios = (List<Municipio>) request.getAttribute("municipios");
+    List<Localidad> listaLocalidades = (List<Localidad>) request.getAttribute("localidades");
+    List<Distrito> listaDistritos = (List<Distrito>) request.getAttribute("distritos");
 
-    List<UsuarioEntity> listaCoordinadores = (List<UsuarioEntity>) request.getAttribute("coordinadores");
+    List<Usuario> listaCoordinadores = (List<Usuario>) request.getAttribute("coordinadores");
 
-    // Lógica de edición
+    // Lógica de edición y ver
     Boolean editando = (Boolean) request.getAttribute("editando");
     if (editando == null) editando = false;
 
-    // Pasamos el objeto completo
-    TiendaEntity tiendaActual = (TiendaEntity) request.getAttribute("tiendaActual");
+    Boolean viendo = (Boolean) request.getAttribute("viendo");
+    if (viendo == null) viendo = false;
 
-    // Lógica para preseleccionar coordinadores si estamos editando
+    // objeto completo
+    Tienda tiendaActual = (Tienda) request.getAttribute("tiendaActual");
+
+    //  coordinadores si estamos editando
     Integer coordPrimaveraId = null;
     Integer coordGRId = null;
 
-    if (editando && tiendaActual != null && tiendaActual.getTiendasCampanya() != null) {
-        for (TiendaCampanyaEntity tc : tiendaActual.getTiendasCampanya()) {
+    if ((editando || viendo) && tiendaActual != null && tiendaActual.getTiendasCampanya() != null) {
+        for (TiendaCampanya tc : tiendaActual.getTiendasCampanya()) {
             if (tc.getCampanya().getTipoCampanya().getId() == 2 && tc.getCoordinador() != null) {
                 coordPrimaveraId = tc.getCoordinador().getId(); // Primavera
             } else if (tc.getCampanya().getTipoCampanya().getId() == 1 && tc.getCoordinador() != null) {
@@ -46,14 +45,21 @@
     }
 %>
 
+<html>
+<head>
+    <title><%= viendo ? "Ver" : (editando ? "Editar" : "Crear") %> Tienda </title>
+    <link rel="stylesheet" href="/css/global.css">
+    <link rel="stylesheet" href="/css/campanyas.css">
+</head>
+
 <jsp:include page="../shared/navbar.jsp"/>
 
 <main class="main-page">
     <section class="campanya-form-wrapper">
         <div class="campanya-header">
             <div>
-                <h2>Datos de la <%= editando ? "tienda" : "nueva tienda" %></h2>
-                <p>Completa la información básica y asigna la tienda a su zona y localidad.</p>
+                <h2>Datos de la <%= viendo ? "tienda (Modo Lectura)" : (editando ? "tienda" : "nueva tienda") %></h2>
+                <p>Información básica de la tienda.</p>
             </div>
         </div>
 
@@ -72,14 +78,14 @@
                         <div class="form-group" style="flex: 2;">
                             <label for="nombre">Nombre de la Tienda</label>
                             <input id="nombre" type="text" name="nombre"
-                                   value="<%= editando && tiendaActual != null ? tiendaActual.getNombre() : "" %>"
+                                   value="<%= tiendaActual != null ? tiendaActual.getNombre() : "" %>" <%= viendo ? "disabled" : "" %>
                                    required placeholder="Ej. Mercadona Centro">
                         </div>
 
                         <div class="form-group" style="flex: 1;">
                             <label for="lineales">Lineales</label>
                             <input id="lineales" type="number" name="lineales"
-                                   value="<%= editando && tiendaActual != null ? tiendaActual.getLineales() : "" %>"
+                                   value="<%= tiendaActual != null ? tiendaActual.getLineales() : "" %>" <%= viendo ? "disabled" : "" %>
                                    placeholder="Ej. 5">
                         </div>
                     </div>
@@ -88,24 +94,24 @@
                         <div class="form-group" style="flex: 2;">
                             <label for="domicilio">Domicilio / Dirección</label>
                             <input id="domicilio" type="text" name="domicilio"
-                                   value="<%= editando && tiendaActual != null && tiendaActual.getDomicilio() != null ? tiendaActual.getDomicilio() : "" %>"
+                                   value="<%= tiendaActual != null && tiendaActual.getDomicilio() != null ? tiendaActual.getDomicilio() : "" %>" <%= viendo ? "disabled" : "" %>
                                    required placeholder="Calle, número...">
                         </div>
 
                         <div class="form-group" style="flex: 1;">
                             <label for="codigoPostal">Código Postal</label>
                             <input id="codigoPostal" type="number" name="codigoPostal"
-                                   value="<%= editando && tiendaActual != null && tiendaActual.getCp() != null ? tiendaActual.getCp() : "" %>"
+                                   value="<%= tiendaActual != null && tiendaActual.getCp() != null ? tiendaActual.getCp() : "" %>" <%= viendo ? "disabled" : "" %>
                                    required placeholder="Ej. 29010">
                         </div>
 
                         <div class="form-group" id="contenedorDistrito" style="flex: 1; display: none;">
                             <label for="distrito">Distrito</label>
-                            <select id="distrito" name="distritoId" class="campanya-select">
+                            <select id="distrito" name="distritoId" class="campanya-select" <%= viendo ? "disabled" : "" %>>
                                 <option value="">Selecciona un distrito</option>
-                                <% if(listaDistritos != null) { for (DistritoEntity d : listaDistritos) { %>
-                                <option value="<%= d.getId() %>"
-                                        <%= (editando && tiendaActual != null && tiendaActual.getDistrito() != null && tiendaActual.getDistrito().getId().equals(d.getId())) ? "selected" : "" %>>
+                                <% if(listaDistritos != null) { for (Distrito d : listaDistritos) { %>
+                                <option value="<%= d.getId() %>" <%= viendo ? "disabled" : "" %>
+                                        <%= (tiendaActual != null && tiendaActual.getDistrito() != null && tiendaActual.getDistrito().getId().equals(d.getId())) ? "selected" : "" %>>
                                     <%= d.getNombre() %>
                                 </option>
                                 <% } } %>
@@ -121,11 +127,11 @@
                         <%-- Select Cadena --%>
                         <div class="form-group">
                             <label for="cadena">Cadena</label>
-                            <select id="cadena" name="cadenaId" class="campanya-select" required>
+                            <select id="cadena" name="cadenaId" class="campanya-select" required <%= viendo ? "disabled" : "" %>>
                                 <option value="">Selecciona una cadena</option>
-                                <% for (CadenaEntity c : listaCadenas) { %>
+                                <% for (Cadena c : listaCadenas) { %>
                                 <option value="<%= c.getId() %>"
-                                        <%= (editando && tiendaActual != null && tiendaActual.getCadena().getId().equals(c.getId())) ? "selected" : "" %>>
+                                        <%= (tiendaActual != null && tiendaActual.getCadena().getId().equals(c.getId())) ? "selected" : "" %>>
                                     <%= c.getNombre() %>
                                 </option>
                                 <% } %>
@@ -135,11 +141,11 @@
                         <%-- Select Zona --%>
                         <div class="form-group">
                             <label for="zona">Zona</label>
-                            <select id="zona" name="zonaId" class="campanya-select" required>
+                            <select id="zona" name="zonaId" class="campanya-select" required <%= viendo ? "disabled" : "" %>>
                                 <option value="">Selecciona una zona</option>
-                                <% for (ZonaEntity z : listaZonas) { %>
+                                <% for (Zona z : listaZonas) { %>
                                 <option value="<%= z.getId() %>"
-                                        <%= (editando && tiendaActual != null && tiendaActual.getLocalidad().getMunicipio().getZona().getId().equals(z.getId())) ? "selected" : "" %>>
+                                        <%= (tiendaActual != null && tiendaActual.getLocalidad().getMunicipio().getZona().getId().equals(z.getId())) ? "selected" : "" %>>
                                     <%= z.getNombre() %>
                                 </option>
                                 <% } %>
@@ -149,11 +155,11 @@
                         <%-- Select Municipio (Bloqueado por defecto) --%>
                         <div class="form-group">
                             <label for="municipio">Municipio</label>
-                            <select id="municipio" name="municipioId" class="campanya-select" required disabled>
+                            <select id="municipio" name="municipioId" class="campanya-select" required disabled <%= viendo ? "disabled" : "" %>>
                                 <option value="">Primero selecciona una zona</option>
-                                <% if(listaMunicipios != null) { for (MunicipioEntity m : listaMunicipios) { %>
+                                <% if(listaMunicipios != null) { for (Municipio m : listaMunicipios) { %>
                                 <option value="<%= m.getId() %>" data-zona="<%= m.getZona().getId() %>"
-                                        <%= (editando && tiendaActual != null && tiendaActual.getLocalidad().getMunicipio().getId().equals(m.getId())) ? "selected" : "" %>>
+                                        <%= (tiendaActual != null && tiendaActual.getLocalidad().getMunicipio().getId().equals(m.getId())) ? "selected" : "" %>>
                                     <%= m.getNombre() %>
                                 </option>
                                 <% } } %>
@@ -163,11 +169,11 @@
                         <%-- Select Localidad (Bloqueado por defecto) --%>
                         <div class="form-group">
                             <label for="localidad">Localidad</label>
-                            <select id="localidad" name="localidadId" class="campanya-select" required disabled>
+                            <select id="localidad" name="localidadId" class="campanya-select" required disabled <%= viendo ? "disabled" : "" %>>
                                 <option value="">Primero selecciona un municipio</option>
-                                <% for (LocalidadEntity l : listaLocalidades) { %>
+                                <% for (Localidad l : listaLocalidades) { %>
                                 <option value="<%= l.getId() %>" data-municipio="<%= l.getMunicipio().getId() %>"
-                                        <%= (editando && tiendaActual != null && tiendaActual.getLocalidad().getId().equals(l.getId())) ? "selected" : "" %>>
+                                        <%= (tiendaActual != null && tiendaActual.getLocalidad().getId().equals(l.getId())) ? "selected" : "" %>>
                                     <%= l.getNombre() %>
                                 </option>
                                 <% } %>
@@ -186,9 +192,9 @@
                         <%-- Select Coord Primavera --%>
                         <div class="form-group">
                             <label for="coordPrimavera">Coordinador Primavera</label>
-                            <select id="coordPrimavera" name="coordinadorPrimaveraId" class="campanya-select">
+                            <select id="coordPrimavera" name="coordinadorPrimaveraId" class="campanya-select" <%= viendo ? "disabled" : "" %>>
                                 <option value="">Sin asignar</option>
-                                <% for (UsuarioEntity u : listaCoordinadores) { %>
+                                <% for (Usuario u : listaCoordinadores) { %>
                                 <option value="<%= u.getId() %>"
                                         <%= (coordPrimaveraId != null && coordPrimaveraId.equals(u.getId())) ? "selected" : "" %>>
                                     <%= u.getNombre() %>
@@ -200,9 +206,9 @@
                         <%-- Select Coord Gran Recogida --%>
                         <div class="form-group">
                             <label for="coordGR">Coordinador Gran Recogida</label>
-                            <select id="coordGR" name="coordinadorGRId" class="campanya-select">
+                            <select id="coordGR" name="coordinadorGRId" class="campanya-select" <%= viendo ? "disabled" : "" %>>
                                 <option value="">Sin asignar</option>
-                                <% for (UsuarioEntity u : listaCoordinadores) { %>
+                                <% for (Usuario u : listaCoordinadores) { %>
                                 <option value="<%= u.getId() %>"
                                         <%= (coordGRId != null && coordGRId.equals(u.getId())) ? "selected" : "" %>>
                                     <%= u.getNombre() %>
@@ -214,13 +220,15 @@
 
                 </section>
 
-                <section class="form-actions">
-                    <a href="/tiendas" class="btn-outline">
-                        <%= editando ? "Salir sin guardar" : "Cancelar" %>
-                    </a>
+                    <section class="form-actions">
+                        <a href="/tiendas" class="btn-outline">
+                            <%= viendo ? "Volver al listado" : (editando ? "Salir sin guardar" : "Cancelar") %>
+                        </a>
 
-                    <button type="submit" class="btn-primary" style="font-size: 15.5px"> Guardar Tienda</button>
-                </section>
+                        <% if (!viendo) { %>
+                        <button type="submit" class="btn-primary" style="font-size: 15.5px">Guardar Tienda</button>
+                        <% } %>
+                    </section>
 
             </form>
         </div>
@@ -241,6 +249,8 @@
 
         //Para verificar si es MALAGA CAPITAL o no
         const contenedorDistrito = document.getElementById('contenedorDistrito');
+
+        const estaViendo = <%= viendo %>;
 
         // Guardamos copias originales
         const todosLosMunicipios = Array.from(municipioSelect.querySelectorAll('option'));
@@ -272,7 +282,9 @@
                 return;
             }
 
-            municipioSelect.disabled = false;
+            if (!estaViendo) {
+                municipioSelect.disabled = false;
+            }
             todosLosMunicipios[0].textContent = "Selecciona un municipio";
 
             todosLosMunicipios.forEach(opcion => {
@@ -298,7 +310,10 @@
                 return;
             }
 
-            localidadSelect.disabled = false;
+            if (!estaViendo) {
+                localidadSelect.disabled = false;
+            }
+
             todasLasLocalidades[0].textContent = "Selecciona una localidad";
 
             todasLasLocalidades.forEach(opcion => {
@@ -320,7 +335,7 @@
         // --- Lógica para modo "Editar" ---
         if (zonaSelect.value) {
             filtrarMunicipios();
-            <% if (editando && tiendaActual != null) { %>
+            <% if ((editando || viendo) && tiendaActual != null) { %>
             // Forzamos la selección del municipio y cargamos sus localidades
             municipioSelect.value = "<%= tiendaActual.getLocalidad().getMunicipio().getId() %>";
             filtrarLocalidades();
