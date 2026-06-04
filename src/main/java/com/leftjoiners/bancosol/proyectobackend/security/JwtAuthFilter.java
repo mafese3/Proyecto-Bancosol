@@ -57,8 +57,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 username = jwtUtil.extractUsername(token);
                 rol = jwtUtil.extractRol(token);
                 nombre = jwtUtil.extractNombre(token);
+
+                System.out.println("Ruta solicitada: " + request.getRequestURI());
+                System.out.println("Token recibido para: " + username + " con Rol: " + rol);
+                System.out.println("¿Es el token válido para jwtUtil?: " + jwtUtil.validateToken(token));
             } catch (Exception e) {
-                System.out.println("Error leyendo token");
+                System.out.println("Error leyendo token" + e.getMessage());
             }
         }
 
