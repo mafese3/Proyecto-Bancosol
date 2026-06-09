@@ -189,7 +189,6 @@ contentType="text/html;charset=UTF-8" language="java" %>
           params.append("turno", turno);
           params.append("lineal", linealActual);
 
-          // Usamos backticks (`) para que la variable se evalúe correctamente
           window.location.href = `/turnos/crearTurno?\${params.toString()}`;
         } else {
           console.error("Faltan datos para navegar");

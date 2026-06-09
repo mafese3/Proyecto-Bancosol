@@ -1,6 +1,7 @@
 package com.leftjoiners.bancosol.proyectobackend.controller.rest;
 
 import com.leftjoiners.bancosol.proyectobackend.dto.AsignacionTurno;
+import com.leftjoiners.bancosol.proyectobackend.dto.Campanya;
 import com.leftjoiners.bancosol.proyectobackend.dto.Turno;
 import com.leftjoiners.bancosol.proyectobackend.service.AsignacionTurnoService;
 import com.leftjoiners.bancosol.proyectobackend.service.TurnoService;
@@ -8,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -57,6 +59,18 @@ public class AsignacionTurnoRestController {
                     request.numVoluntarios(),
                     request.observaciones()
         );
+    }
+
+    @GetMapping("/filtrar/{tipoCampanyaId}/{campanyaId}")
+    public List<AsignacionTurno> filtrarTurnos(@PathVariable Integer tipoCampanyaId,
+                                               @PathVariable Integer campanyaId) {
+        List<AsignacionTurno> asignacionesTurno = new ArrayList<>();
+
+        if (tipoCampanyaId != null && campanyaId != null) {
+            asignacionesTurno = this.asignacionTurnoService.filtrarPorTipoyCampanya(tipoCampanyaId, campanyaId);
+        }
+
+        return asignacionesTurno;
     }
 }
 

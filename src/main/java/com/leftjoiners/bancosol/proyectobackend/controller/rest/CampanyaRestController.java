@@ -1,11 +1,13 @@
 package com.leftjoiners.bancosol.proyectobackend.controller.rest;
 
+import com.leftjoiners.bancosol.proyectobackend.dto.AsignacionTurno;
 import com.leftjoiners.bancosol.proyectobackend.dto.Campanya;
 import com.leftjoiners.bancosol.proyectobackend.service.CampanyasService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -51,5 +53,16 @@ public class CampanyaRestController {
         if (ids != null && !ids.isEmpty()) {
             this.campanyasService.eliminarCampanyas(ids);
         }
+    }
+
+    @GetMapping("/filtrarPorTipo/{idTipo}")
+    public List<Campanya> filtrarPorTipo(@PathVariable Integer idTipo){
+        List<Campanya> campanyas = new ArrayList<>();
+
+        if (idTipo != null) {
+            campanyas = this.campanyasService.filtrarCampanyasPorTipo(idTipo);
+        }
+
+        return campanyas;
     }
 }
