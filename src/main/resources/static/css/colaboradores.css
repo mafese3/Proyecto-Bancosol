@@ -7,6 +7,32 @@
     box-sizing: border-box;
 }
 
+.page-body {
+    width: 90%;
+    justify-content: center;
+    justify-self: center;
+    justify-items: center;
+}
+
+.page-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 90%;
+    margin-top: 0.67em;
+}
+
+.page-header h1 {
+    margin: 0;
+}
+
+#anadir-colaborador {
+    text-decoration: none;
+}
+
+
+
 .left-column {
     flex: 1; /* Ocupará todo el espacio disponible automáticamente */
     display: flex;
@@ -256,8 +282,8 @@ tbody tr.selected {
 #cancel-button { background-color: var(--bg-white); color: var(--status-red); border: 1px solid var(--status-red); }
 #cancel-button:hover { background-color: #fef2f2; }
 
-#eliminar-b { background-color: var(--bg-white); color: var(--status-red); border: 1px solid var(--status-red); }
-#eliminar-b:hover { background-color: #fef2f2; }
+.eliminar-b { background-color: var(--bg-white); color: var(--status-red); border: 1px solid var(--status-red); }
+.eliminar-b:hover { background-color: #fef2f2; }
 
 .display-fila {
     display: flex;

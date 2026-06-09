@@ -73,6 +73,8 @@
 
 .form-group input[type="text"],
 .form-group input[type="date"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
 .form-group select {
     padding: 10px 12px;
     border: 1px solid var(--border-color);
@@ -87,6 +89,8 @@
 
 .form-group input[type="text"]:focus,
 .form-group input[type="date"]:focus,
+.form-group input[type="email"]:focus,
+.form-group input[type="tel"]:focus,
 .form-group select:focus {
     border-color: var(--accent-blue);
     box-shadow: 0 0 0 3px rgba(68, 114, 196, 0.12);
@@ -121,14 +125,17 @@
 
 table {
     align-self: center;
-    width: 80%;
+    width: 90%;
     border-radius: 6px;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
+    overflow: hidden;
     text-align: left;
 }
 
 thead {
     background-color: var(--primary-blue);
+    border-radius: 6px;
     color: white;
     top: 0;
 }

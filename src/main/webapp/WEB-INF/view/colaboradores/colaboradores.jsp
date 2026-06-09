@@ -22,52 +22,67 @@
 <jsp:include page="../shared/navbar.jsp"/>
 
 <main>
-    <div class="page-wrapper">
-        <div class="left-column">
-            <div class="table-container card">
-                <table class="modernTable">
-                    <thead>
-                    <tr>
-                        <th>Colaborador</th>
-                        <th>Domicilio</th>
-                        <th>Localidad</th>
-                        <th>Colabora en</th>
-                        <th>Coordinador</th>
-                        <th>Contacto Principal</th>
-                        <th>Observaciones</th>
-                    </tr>
-                    </thead>
-                    <tbody id="table-body">
-                        <%
-                            for (Colaborador colaborador : colaboradores) {
-
-                        %>
-                        <tr data-id="<%=colaborador.getId()%>">
-                            <td class="font-medium text-blue"><%=colaborador.getNombre()%></td>
-                            <td><%=colaborador.getDomicilio()%></td>
-                            <td><%=colaborador.getLocalidadSede() != null ? colaborador.getLocalidadSede().getNombre() : ""%></td>
-                            <td><%=colaborador.getColaboraEn() != null ? colaborador.getColaboraEn().getNombre() : ""%></td>
-                            <td><%=colaborador.getCoordinador() != null ? colaborador.getCoordinador().getNombre() : ""%></td>
-                            <td><%=colaborador.getContactoPrincipal() != null ? colaborador.getContactoPrincipal() : ""%></td>
-                            <td><%=colaborador.getObservaciones() != null ? colaborador.getObservaciones() : ""%></td>
-                        </tr>
-                        <%
-                            }
-                        %>
-                    </tbody>
-                </table>
+    <div class="page-body">
+        <div class="page-header">
+            <div class="left-header">
+                <h1>Colaboradores</h1>
+                <div class="text-muted">
+                    Consulta los colaboradores y edita sus datos.
+                </div>
+            </div>
+            <div class="right-header">
+                <a href="/colaboradores/anadir" class="btn-primary" id="anadir-colaborador">
+                        + Añadir colaborador
+                </a>
             </div>
         </div>
+        <div class="page-wrapper">
+            <div class="left-column">
+                <div class="table-container card">
+                    <table class="modernTable">
+                        <thead>
+                        <tr>
+                            <th>Colaborador</th>
+                            <th>Domicilio</th>
+                            <th>Localidad</th>
+                            <th>Colabora en</th>
+                            <th>Coordinador</th>
+                            <th>Contacto Principal</th>
+                            <th>Observaciones</th>
+                        </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <%
+                                for (Colaborador colaborador : colaboradores) {
 
-        <div class="right-column">
-            <div class="side-panel-unified">
-                <div id="info-container" class="card side-panel">
-                </div>
-                <div class="buttons-wrapper">
-                    <jsp:include page="buttons-colaboradores.jsp"/>
+                            %>
+                            <tr data-id="<%=colaborador.getId()%>">
+                                <td class="font-medium text-blue"><%=colaborador.getNombre()%></td>
+                                <td><%=colaborador.getDomicilio()%></td>
+                                <td><%=colaborador.getLocalidadSede() != null ? colaborador.getLocalidadSede().getNombre() : ""%></td>
+                                <td><%=colaborador.getColaboraEn() != null ? colaborador.getColaboraEn().getNombre() : ""%></td>
+                                <td><%=colaborador.getCoordinador() != null ? colaborador.getCoordinador().getNombre() : ""%></td>
+                                <td><%=colaborador.getContactoPrincipal() != null ? colaborador.getContactoPrincipal() : ""%></td>
+                                <td><%=colaborador.getObservaciones() != null ? colaborador.getObservaciones() : ""%></td>
+                            </tr>
+                            <%
+                                }
+                            %>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
+            <div class="right-column">
+                <div class="side-panel-unified">
+                    <div id="info-container" class="card side-panel">
+                    </div>
+                    <div class="buttons-wrapper">
+                        <jsp:include page="buttons-colaboradores.jsp"/>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 </main>
@@ -128,10 +143,6 @@
     const buttonSection = document.querySelector(".buttons-section");
 
     buttonSection.addEventListener("click", (e) => {
-        if(e.target.id === "anadir-b"){
-            window.location.href = "/colaboradores/crear";
-        }
-
         if(e.target.id === "modificar-b") {
             if(!id){
                 return;

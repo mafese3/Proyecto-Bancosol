@@ -48,4 +48,10 @@ public class ContactoColaboradorService {
 
     }
 
+    public void eliminarContacto(Integer id) {
+        if (id != null){
+            this.contactoColaboradorRepository.deleteById(id);
+        }
+    }
+
 }

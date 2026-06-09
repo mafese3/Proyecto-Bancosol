@@ -14,15 +14,8 @@
 <body>
     <div class="buttons-section">
         <div class="flex-buttons">
-            <button class="btn-primary" id="anadir-b">Añadir colaborador</button>
-            <button class="btn-outline" id="modificar-b">Modificar colaborador</button>
-            <button class="btn-outline" id="eliminar-b">Eliminar colaborador</button>
-            <button class="btn-outline" id="asignar-b">Asignar a tienda</button>
-        </div>
-        <div class="flex-action-buttons">
-            <button id="create-button">Guardar</button>
-            <button id="cancel-button">Cancelar</button>
-            <button id="export-button">Exportar</button>
+            <button class="btn-primary" id="modificar-b">Modificar</button>
+            <button class="btn-outline eliminar-b">Eliminar</button>
         </div>
     </div>
 </body>

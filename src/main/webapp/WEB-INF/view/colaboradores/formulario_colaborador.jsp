@@ -1,5 +1,8 @@
 <%@ page import="com.leftjoiners.bancosol.proyectobackend.dto.Colaborador" %>
-<%@ page import="com.leftjoiners.bancosol.proyectobackend.dto.ContactoColaborador" %><%--
+<%@ page import="com.leftjoiners.bancosol.proyectobackend.dto.ContactoColaborador" %>
+<%@ page import="com.leftjoiners.bancosol.proyectobackend.dto.Localidad" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.leftjoiners.bancosol.proyectobackend.dto.Usuario" %><%--
   Created by IntelliJ IDEA.
   User: marin
   Date: 25/05/2026
@@ -15,7 +18,10 @@
 </head>
 <body>
     <%Colaborador colaborador = (Colaborador) request.getAttribute("colaborador");
-    Boolean editando = (Boolean) request.getAttribute("editando");%>
+    Boolean editando = (Boolean) request.getAttribute("editando");
+    List<Localidad> localidades = (List<Localidad>) request.getAttribute("localidades");
+    List<Usuario> coordinadores = (List<Usuario>) request.getAttribute("coordinadores");
+    %>
     <jsp:include page="../shared/navbar.jsp"/>
     <main class="main-page">
         <section class="form-wrapper">
@@ -27,10 +33,11 @@
             </div>
 
             <div class="card form-card">
-                <form action="/colaboradores/guardar" method="post" class="colaborador-form">
-                    <%if(editando){%>
+                <form action="/colaboradores/guardar" method="post" class="colaborador-form" id="formColaborador">
+                    <%if(editando) {%>
                         <input type="hidden" name="id" value="<%=colaborador.getId()%>">
                     <%}%>
+
 
                     <section class="form-section">
                         <div class="form-row">
@@ -41,6 +48,13 @@
                             <div class="form-group">
                                 <label for="codigo">Código</label>
                                 <input type="text" id="codigo" name="codigo" value="<%=editando ? colaborador.getCodigo() : ""%>" required>
+                            </div>
+                            <div class="form-group">
+                                <label>¿Es temporal?</label>
+                                <div class="radio-options">
+                                    <input type="radio" name="temporal" value="true" <%=editando && colaborador.getTemporal() ? "checked" : "" %>> Sí
+                                    <input type="radio" name="temporal" value="false" <%=editando && !colaborador.getTemporal() ? "checked" : "" %>> No
+                                </div>
                             </div>
                         </div>
 
@@ -55,9 +69,40 @@
                             </div>
                         </div>
 
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="localidadSede">Localidad de la sede:</label>
+                                <select name="localidadSede" id="localidadSede">
+                                    <%for(Localidad l : localidades) {%>
+                                        <option value="<%=l.getId()%>" <%=editando && colaborador.getLocalidadSede().getId() == l.getId() ? "selected" : ""%>><%=l.getNombre()%></option>
+                                    <%}%>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="colaboraEn">Colabora en:</label>
+                                <select name="colaboraEn" id="colaboraEn">
+                                    <%for(Localidad l : localidades) {%>
+                                        <option value="<%=l.getId()%>" <%=editando && colaborador.getColaboraEn().getId() == l.getId() ? "selected" : ""%>><%=l.getNombre()%></option>
+                                    <%}%>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="coordinador">Coordinador:</label>
+                                <select name="coordinador" id="coordinador">
+                                    <%for(Usuario u : coordinadores) {%>
+                                        <option value="<%=u.getId()%>" <%=editando && colaborador.getCoordinador().getId() == u.getId() ? "selected" : ""%>><%=u.getNombre()%></option>
+                                    <%}%>
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="form-group contact-span">
                             <p>Contactos</p>
                             <table class="contact-table">
+                                <%if (editando) { %>
                                 <thead>
                                     <tr>
                                         <th>Nombre</th>
@@ -66,8 +111,9 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <%if (editando) {
-                                        for (ContactoColaborador c : colaborador.getContactos()) {%>
+                                <%
+                                    for (ContactoColaborador c : colaborador.getContactos()) {%>
+
                                         <tr>
                                             <td><%=c.getNombre()%></td>
                                             <td class="columna-centrada">
@@ -78,15 +124,39 @@
                                                 <a class="btn-danger-outline" href="/colaboradores/eliminarContacto?id=<%=c.getId()%>"> Eliminar</a>
                                             </td>
                                         </tr>
+
                                     <%
-                                            }
-                                        }
-                                    %>
-                                <tr>
-                                    <td class="anadir-contacto">
-                                        <a href="/colaboradores/anadirContacto?id=<%=colaborador.getId()%>"> + Añadir contacto</a>
-                                    </td>
-                                </tr>
+                                            }%>
+                                        <tr>
+                                            <td class="anadir-contacto" colspan="3">
+                                                <a href="/colaboradores/anadirContacto?id=<%=colaborador.getId()%>"> + Añadir contacto</a>
+                                            </td>
+                                        </tr>
+                                    <%
+                                        } else { %>
+                                        <thead>
+                                        <tr>
+                                            <th colspan="3">
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                           <tr>
+                                               <td colspan="3">
+                                                   <p class="text-mutex">Añadir primer contacto (será el principal)</p>
+                                                   <div class="form-row">
+                                                       <div class="form-group">
+                                                           <input type="text" name="nuevoContactoNombre" placeholder="Nombre completo" required>
+                                                       </div>
+                                                       <div class="form-group">
+                                                           <input type="email" name="nuevoContactoEmail" placeholder="Correo electrónico" required>
+                                                       </div>
+                                                       <div class="form-group">
+                                                           <input type="tel" name="nuevoContactoTelefono" placeholder="Teléfono" required>
+                                                       </div>
+                                                   </div>
+                                               </td>
+                                           </tr>
+                                    <%}%>
                                 </tbody>
                             </table>
 
@@ -107,4 +177,37 @@
         </section>
     </main>
 </body>
+<script>
+    document.querySelector("#formColaborador").addEventListener("submit", function(event) {
+        const editando = <%=editando%>;
+
+        if(editando) {
+            const contactos = document.querySelectorAll('input[name="contactoPrincipal"]');
+
+            if (contactos.length === 0) {
+                event.preventDefault();
+                alert("Error: El colaborador debe tener al menos un contacto asignado.")
+                window.scrollTo(0,0);
+                return;
+            }
+
+            let seleccionado = false;
+            for (let i = 0; i < contactos.length; i++) {
+                if (contactos[i].checked) {
+                    seleccionado = true;
+                    break;
+                }
+            }
+
+            if (!seleccionado) {
+                event.preventDefault();
+                alert("Error: Debes marcar un contacto como principal.")
+                window.scrollTo(0,0);
+                return;
+            }
+        }
+
+
+    })
+</script>
 </html>

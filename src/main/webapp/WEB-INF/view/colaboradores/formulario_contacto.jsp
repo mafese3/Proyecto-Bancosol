@@ -70,7 +70,7 @@
                 </section>
 
                 <section class="form-actions">
-                    <a href="/colaboradores/editar?id=<%=contacto.getId()%>" class="btn-danger-outline">Cancelar</a>
+                    <a href="/colaboradores/editar?id=<%=colaborador.getId()%>" class="btn-danger-outline">Cancelar</a>
                     <button type="submit" class="btn-primary">Guardar</button>
                 </section>
             </form>
