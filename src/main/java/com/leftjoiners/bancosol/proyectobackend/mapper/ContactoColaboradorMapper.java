@@ -1,5 +1,5 @@
 /*
-Marina Fernández Serrano 100%
+Marina Fernández Serrano: 100%
 */
 package com.leftjoiners.bancosol.proyectobackend.mapper;
 
