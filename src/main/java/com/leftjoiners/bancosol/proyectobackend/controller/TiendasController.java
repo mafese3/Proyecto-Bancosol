@@ -1,5 +1,6 @@
 /*
-Daniel Robles Cantos 90%
+Daniel Robles Cantos: 70%
+Javier Urbaneja Benítez: 20%
 IA: 10%
 */
 package com.leftjoiners.bancosol.proyectobackend.controller;
