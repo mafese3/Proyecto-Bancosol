@@ -16,7 +16,6 @@ public class UsuarioMapper extends MapperDTO<Usuario, UsuarioEntity> {
         dto.setId(entity.getId());
         dto.setNombre(entity.getNombre());
         dto.setCp(entity.getCp());
-        //dto.setContrasenya(entity.getContrasenya());
         dto.setUsuario(entity.getUsuario());            //SIN ESTO EN REACT NO IBA
         dto.setEmail(entity.getEmail());
         dto.setTelefono(entity.getTelefono());

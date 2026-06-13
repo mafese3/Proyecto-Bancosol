@@ -12,7 +12,6 @@ public class Usuario {
     private Integer id;
     private String rol;
     private String usuario;
-    private String contrasenya;
     private String nombre;
     private String telefono;
     private String email;
