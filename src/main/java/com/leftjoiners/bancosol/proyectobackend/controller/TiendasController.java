@@ -150,8 +150,8 @@ public class TiendasController {
     public String asignarParicipacion(@RequestParam("id") Integer idTienda, Model model) {
         Tienda tienda = this.tiendaService.buscarTienda(idTienda);
         List<TiendaCampanya> tiendasCampanya = this.tiendaCampanyaService.buscarTiendasCampanyaPorTienda(tienda.getId());
-        List<TipoCampanya> tipoCampanyas = this.tipoCampanyaService.listarTipoCampanyas();
-        List<Campanya> campanyas = this.campanyasService.listarCampanyas();
+        List<TipoCampanya> tipoCampanyas = this.tipoCampanyaService.buscarTipoCampanyaParticipantes(idTienda);
+        List<Campanya> campanyas = this.campanyasService.buscarCampanyasParticipantes(idTienda);
 
         model.addAttribute("tienda", tienda);
         model.addAttribute("tiendasCampanya", tiendasCampanya);
