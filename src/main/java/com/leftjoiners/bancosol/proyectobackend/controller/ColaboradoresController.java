@@ -40,13 +40,13 @@ public class ColaboradoresController {
     }
 
     @PostMapping("/buscarColaborador")
-    public String doBuscar(@RequestParam("id") Integer id,
-            Model model){
-
-        Colaborador colaborador = colaboradorService.buscarColaborador(id);
+    public String buscarColaborador(@RequestParam("id") Integer id, Model model) {
+        Colaborador colaborador = this.colaboradorService.buscarColaborador(id);
         ContactoColaborador contactoColaborador = contactoColaboradorService.buscarContactoPrincipalDe(id);
+
         model.addAttribute("colaborador", colaborador);
         model.addAttribute("contactoPrincipal", contactoColaborador);
+
         return "colaboradores/info_colaboradores";
     }
 
