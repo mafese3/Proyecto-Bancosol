@@ -29,7 +29,7 @@ public class ColaboradoresRestController {
     public Colaborador buscarColaborador(@PathVariable Integer id) {
         return this.colaboradorService.buscarColaborador(id);
     }
-    @GetMapping("/filtrar/{idLocalidad}/{idCoordinador}")
+    @GetMapping("/filtrar")
     public List<Colaborador> filtrar(@RequestParam(required = false) Integer idLocalidad, @RequestParam(required = false) Integer idCoordinador){
         return this.colaboradorService.filtrarColaboradores(idLocalidad,idCoordinador);
     }
